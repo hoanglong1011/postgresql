@@ -1,29 +1,27 @@
-class User {
-    constructor(pool){
-        this.pool = pool;
+const pool = require('../lib/db');
+
+class User {    
+    constructor(username, password, name, email){
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.email = email;
     }
 
-    login(username, password, callback){
-        const sql = `SELECT * FROM users WHERE username = '${username}' AND '${password}' = ?`;
-        this.pool.getdata(sql, null, (err, result) =>  {
-            if(err) callback(false);
-            else callback(true);
+    login(callback){
+        const sql = `SELECT * FROM users WHERE username = '${this.username}'`;
+        pool.getdata(sql, null, (err, result) =>  {
+            callback(err, result);
         });
     }
 
-    add(username, password, name, email, callback){
-        const sql = `INSERT INTO users(username, password, name, email) VALUES('${username}', '${password}', '${name}', '${email}')`;
-        this.pool.getdata(sql, null, (err, result) => {
+    add(callback){
+        const sql = `INSERT INTO users(username, password, name, email) VALUES('${this.username}', '${this.password}', '${this.name}', '${this.email}')`;
+        pool.getdata(sql, null, (err, result) => {
             if(err) callback(false);
             else callback(true);
         });
     }
 }
 
-const pool = require('../lib/db');
-
-const user = new User(pool);
-
-user.add('hoanglong1011', '123', 'hoanglong', 'viethq@spaceaa.com', (success) => {
-    console.log(success);
-})
+module.exports = User;
